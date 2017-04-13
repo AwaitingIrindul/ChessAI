@@ -101,6 +101,7 @@ namespace chesspp
             capturables.clear();
             for(auto &p : pieces)
             {
+
                 p->tick(pos);
                 p->makeTrajectory();
             }

@@ -29,6 +29,7 @@ namespace chesspp
             if(moves == 1 && m != pos)
             { //moved just happened, en passant no longer allowed
                 en_passant = false;
+                //TODO : Refaire en passant
             }
         }
 
