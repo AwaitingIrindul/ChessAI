@@ -91,6 +91,10 @@ namespace chesspp
                 calcTrajectory();
             }
 
+            virtual std::string classname() {
+                return "Piece";
+            };
+
         protected:
             /**
              * \brief
@@ -147,6 +151,8 @@ namespace chesspp
              * \param tile The position to mark.
              */
             void removeCapturable(Position_t const &tile);
+
+
 
         private:
             /**
