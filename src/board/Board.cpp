@@ -26,6 +26,7 @@ namespace chesspp
         {
             for(auto const &p : *this)
             {
+
                 if(p->pos == pos)
                 {
                     return true;
@@ -85,6 +86,9 @@ namespace chesspp
         -> MovementsRange
         {
             auto range = capturings.equal_range(find(p));
+
+            //Visiblement la y a plys de respect et on retourne ce qu'on veut..
+            //Retour casté en MovementsRange je crois.
             return {{range.first, range.second}};
         }
         auto Board::pieceCapturable(piece::Piece const &p) noexcept
@@ -125,7 +129,6 @@ namespace chesspp
             }
 
             pieces.erase(capturable->first);
-            std::clog << "Capture: ";
             return move(source, target); //re-use existing code
         }
         bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target)
@@ -158,11 +161,9 @@ namespace chesspp
                 return false;
             }
 
-            std::clog << "Moved piece at " << (*source)->pos << std::flush;
             auto t = target->second;
             (*source)->move(t);
             update(t);
-            std::clog << " to " << t << std::endl;
             return true;
         }
     }

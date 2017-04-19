@@ -56,9 +56,6 @@ namespace chesspp
             throw Exception("Unknown OS. Unable to determine executable path.");
         #endif
 
-            std::clog << "Executable path   = \"" << ret << '"' << std::endl;
-            std::clog << "Working directory = \"" << boost::filesystem::current_path().string() << '"' << std::endl;
-
             return ret;
         }
         std::string Configuration::validateConfigFile(std::string const &configFile)

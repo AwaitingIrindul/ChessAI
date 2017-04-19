@@ -49,9 +49,7 @@ namespace chesspp
                 }
                 else
                 {
-                    std::clog << "SFML Resource loaded \""
-                              << file_path << "\" for "
-                              << typeid(sfmlT).name() << std::endl;
+
                 }
             }
 

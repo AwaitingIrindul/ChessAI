@@ -17,8 +17,8 @@ namespace chesspp
         , menu_background{app.resourcesConfig().resources().from_config<Texture_res>("menu", "background")}
         , logo           {app.resourcesConfig().resources().from_config<Texture_res>("menu", "title")     }
         , font           (app.resourcesConfig().resources().from_config<Font_res>   ("menu", "font")      ) //can't use {}
-        , start_text{"Start", 75}
-        , quit_text {"Quit", 75}
+        , start_text{"Lancer la partie", 65}
+        , quit_text {"Quitter", 75}
         {
             //Sets position at centered horizontally, down 10% vertically
             logo.setPosition((display.getSize().x/2) - (logo.getLocalBounds().width/2), display.getSize().y*0.10);
@@ -50,14 +50,12 @@ namespace chesspp
             //If clicked on Start button
             if(start_text.contains(x,y))
             {
-                std::clog << "State Change: StartMenuState -> ChessPlusPlusState" << std::endl;
                 return app.changeState<ChessPlusPlusState>(std::ref(app), std::ref(display));
             }
 
             //If clicked on Exit button
             if(quit_text.contains(x,y))
             {
-                std::clog << "Exiting from StartMenuState" << std::endl;
                 return app.stop();
             }
         }
@@ -82,12 +80,10 @@ namespace chesspp
             {
                 if(button_manager.getSelected() == start_text)
                 {
-                    std::clog << "State changing to ChessPlusPlus" << std::endl;
                     return app.changeState<ChessPlusPlusState>(std::ref(app), std::ref(display));
                 }
                 if(button_manager.getSelected() == quit_text)
                 {
-                    std::clog << "Exiting from StartMenuState" << std::endl;
                     return app.stop();
                 }
             }

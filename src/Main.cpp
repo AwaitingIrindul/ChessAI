@@ -1,11 +1,7 @@
 #include "app/Application.hpp"
 #include "app/StartMenuState.hpp"
-#include "Debug.hpp"
-#include "Exception.hpp"
 
 #include <iostream>
-#include <typeinfo>
-#include <cstdlib>
 
 /**
  * \brief
@@ -27,7 +23,7 @@ int main(int nargs, char const *const *args)
         sf::RenderWindow disp
         {
             sf::VideoMode(640, 640),
-            "ChessPlusPlus",
+            "Chess AI",
             sf::Style::Close
         };
         chesspp::app::Application app {disp};
@@ -39,5 +35,4 @@ int main(int nargs, char const *const *args)
         std::clog << typeid(e).name() << " caught in main: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
-    std::clog << "Exiting normally from main" << std::endl;
 }

@@ -53,6 +53,7 @@ namespace chesspp
             else if(moves == 1 && en_passant) //just moved 2 spaces forward
             {
                 addCapturable(Position_t(pos).move(facing, -1)); //enable en passant
+                //TODO Ajoute le pion en mode "capturable" depuis la case d'avant, ajoutez vérification "Si c'est un pion qui fait le en passant c'est bon"
             }
 
             Position_t diagr = Position_t(pos).move(Rotate(facing, +1));
