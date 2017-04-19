@@ -30,6 +30,9 @@ namespace chesspp
                         ,Dir::South
                         ,Dir::West})
             {
+
+                if(moves == 0)
+                    castling = true;
                 Position_t t;
                 for(signed i = 1; board.valid(t = Position_t(pos).move(d, i)); ++i)
                 {
@@ -46,10 +49,14 @@ namespace chesspp
         void Rook::tick(const Piece::Position_t &m) {
             if(moves == 1 && m != pos)
             { //moved just happened, castling no longer allowed
-                //castling = false;
+                castling = false;
 
             }
             // TODO 19/04/2017 : Add castling attribut
+        }
+
+        std::string Rook::classname() {
+            return "Rook";
         }
     }
 }

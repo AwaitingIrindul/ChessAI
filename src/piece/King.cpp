@@ -1,6 +1,5 @@
 #include "King.hpp"
-
-#include <initializer_list>
+#include "Rook.hpp"
 
 namespace chesspp
 {
@@ -36,6 +35,9 @@ namespace chesspp
             {
                 Position_t t = Position_t(pos).move(d);
 
+
+                if(moves == 0)
+                    castling = true;
                 //Added check if capturing (King cannot move to a capturing tile)
                 auto it = std::find_if(board.pieceCapturings().begin(),
                                        board.pieceCapturings().end(),
@@ -50,8 +52,34 @@ namespace chesspp
                 if(it == board.pieceCapturings().end()){
                     addTrajectory(t);
                     addCapturing(t);
+                    castling = false; //Can't castle when there is a possibility of capture on the way
                 }
 
+
+                if(castling){
+
+
+
+                    for (auto piece = board.begin(); piece != board.end(); piece++) {
+                        if((*piece)->classname() == "Rook" && (*piece)->suit != this->suit){
+                            Rook r= dynamic_cast<Rook&>(**piece);
+                            if(r.castling){
+                                int x = r.pos.x;
+                                if( x - pos.x > 0){
+                                    for (int i = 1; i <= 3; ++i) {
+                                        Dir dir = Dir::West;
+                                        Position_t toCheck = Position_t(pos).move(dir, i);
+                                        // TODO 19/04/2017 : Check if nothing, if non echec
+                                    }
+
+
+                                } else if( x - pos.x < 0 ){
+                                    smallCastle = false;
+                                }
+                            }
+                        }
+                    }
+                }
 
             }
         }
@@ -59,10 +87,14 @@ namespace chesspp
         void King::tick(const Piece::Position_t &m) {
             if(moves == 1 && m != pos)
             { //moved just happened, castling no longer allowed
-                //castling = false;
-
+                castling = false;
+                // TODO 19/04/2017 : If King moved from two, castling is done here
             }
-            // TODO 19/04/2017 : ajouter attribut castling.
+
+        }
+
+        std::string King::classname() {
+            return "King";
         }
     }
 }
