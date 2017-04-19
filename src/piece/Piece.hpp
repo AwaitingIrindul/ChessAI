@@ -85,7 +85,7 @@ namespace chesspp
              * \note
              * Should not be overridden or shadowed by deriving classes.
              */
-            void makeTrajectory()
+            virtual void makeTrajectory()
             {
                 addCapturable(pos);
                 calcTrajectory();

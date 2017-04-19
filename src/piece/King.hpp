@@ -13,7 +13,12 @@ namespace chesspp
         {
         public:
             King(board::Board &b, Position_t const &pos, Suit_t const &s, Class_t const &pc);
+            virtual void tick(Position_t const &p) override;
 
+            virtual void makeTrajectory() override
+            {
+                calcTrajectory();
+            }
         protected:
             virtual void calcTrajectory() override;
         };

@@ -14,6 +14,7 @@ namespace chesspp
         public:
             Rook(board::Board &b, Position_t const &pos, Suit_t const &s, Class_t const &pc);
 
+            virtual void tick(Position_t const &p) override;
         protected:
             virtual void calcTrajectory() override;
         };

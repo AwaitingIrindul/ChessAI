@@ -42,5 +42,14 @@ namespace chesspp
                 }
             }
         }
+
+        void Rook::tick(const Piece::Position_t &m) {
+            if(moves == 1 && m != pos)
+            { //moved just happened, castling no longer allowed
+                //castling = false;
+
+            }
+            // TODO 19/04/2017 : Add castling attribut
+        }
     }
 }
