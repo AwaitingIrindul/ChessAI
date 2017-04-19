@@ -35,8 +35,23 @@ namespace chesspp
                         ,Dir::NorthWest})
             {
                 Position_t t = Position_t(pos).move(d);
-                addTrajectory(t);
-                addCapturing(t);
+
+                //Added check if capturing (King cannot move to a capturing tile)
+                auto it = std::find_if(board.pieceCapturings().begin(),
+                                       board.pieceCapturings().end(),
+                                       [&](board::Board::Movements_t::value_type const &m){
+
+                                          return (*(m.first))->suit != this->suit &&
+                                            (m.second == t);
+                                       }
+                );
+
+                //If no piece can capture this position, we can move to it
+                if(it == board.pieceCapturings().end()){
+                    addTrajectory(t);
+                    addCapturing(t);
+                }
+
 
             }
         }
