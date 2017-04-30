@@ -18,7 +18,7 @@ namespace chesspp
 
             for(auto const &p : pieces)
             {
-                p->makeTrajectory();
+                    p->makeTrajectory();
             }
         }
 
@@ -26,6 +26,7 @@ namespace chesspp
         {
             for(auto const &p : *this)
             {
+
 
                 if(p->pos == pos)
                 {
@@ -98,20 +99,44 @@ namespace chesspp
             return {{range.first, range.second}};
         }
 
-        void Board::update(Position_t const &pos)
+        void Board::update(Position_t const &pos, Suit turn)
         {
             trajectories.clear();
             capturings.clear();
             capturables.clear();
             for(auto &p : pieces)
             {
+                if(p->classname() != "King"){
+                    p->tick(pos);
+                    p->makeTrajectory();
+                }
+            }
 
-                p->tick(pos);
-                p->makeTrajectory();
+
+            auto king1 = std::find_if(pieces.begin(), pieces.end(),
+                                   [&](auto &p){
+                                       return (p->suit == turn) && (p->classname() == "King");
+                                   }
+            );
+
+            auto king2 = std::find_if(pieces.begin(), pieces.end(),
+                                      [&](auto &p){
+                                          return (p->suit != turn) && (p->classname() == "King");
+                                      }
+            );
+
+            if(king1 != pieces.end()){
+                (*king1)->tick(pos);
+                (*king1)->makeTrajectory();
+            }
+
+            if(king2 != pieces.end()) {
+                (*king2)->tick(pos);
+                (*king2)->makeTrajectory();
             }
         }
 
-        bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable)
+        bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable, Suit turn)
         {
             if(source == pieces.end())
             {
@@ -129,9 +154,9 @@ namespace chesspp
             }
 
             pieces.erase(capturable->first);
-            return move(source, target); //re-use existing code
+            return move(source, target, turn); //re-use existing code
         }
-        bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target)
+        bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target, Suit turn)
         {
             if(source == pieces.end())
             {
@@ -163,7 +188,7 @@ namespace chesspp
 
             auto t = target->second;
             (*source)->move(t);
-            update(t);
+            update(t, turn);
             return true;
         }
     }

@@ -116,7 +116,7 @@ namespace chesspp
                                 if(jt->second == p)
                                 {
                                     //If the capturable piece is at the position we are going to land
-                                    if(board.capture(selected, it, jt)) // We can capture it
+                                    if(board.capture(selected, it, jt, *turn)) // We can capture the piece
                                     {
                                         nextTurn();
                                         return;
@@ -137,7 +137,7 @@ namespace chesspp
                         //it contain the tile we are landing on
                         if(it != board.pieceTrajectories().end()) //If the tile exists, i.e the movement is possible
                         {
-                            if(board.move(selected, it)) //We move
+                            if(board.move(selected, it, *turn)) //We move
                             {
                                 nextTurn();
                             }

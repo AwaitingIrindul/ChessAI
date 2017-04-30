@@ -1,6 +1,7 @@
 #include "Rook.hpp"
 
 #include <initializer_list>
+#include <iostream>
 
 namespace chesspp
 {
@@ -23,6 +24,8 @@ namespace chesspp
 
         void Rook::calcTrajectory()
         {
+
+
             //Rooks can move infinitely in the four straight directions
             using Dir = util::Direction;
             for(Dir d : {Dir::North

@@ -20,9 +20,11 @@ namespace chesspp
          * \brief
          * A chess piece.
          */
+        class King;
         class Piece
         {
             friend class ::chesspp::board::Board;
+            friend class ::chesspp::piece::King;
 
         public:
             using Position_t = config::BoardConfig::Position_t;
