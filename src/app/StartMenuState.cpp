@@ -15,13 +15,12 @@ namespace chesspp
         : AppState(display_) //can't use {}
         , app(app_)          //can't use {}
         , menu_background{app.resourcesConfig().resources().from_config<Texture_res>("menu", "background")}
-        , logo           {app.resourcesConfig().resources().from_config<Texture_res>("menu", "title")     }
         , font           (app.resourcesConfig().resources().from_config<Font_res>   ("menu", "font")      ) //can't use {}
         , start_text{"Lancer la partie", 65}
         , quit_text {"Quitter", 75}
         {
             //Sets position at centered horizontally, down 10% vertically
-            logo.setPosition((display.getSize().x/2) - (logo.getLocalBounds().width/2), display.getSize().y*0.10);
+            //logo.setPosition((display.getSize().x/2) - (logo.getLocalBounds().width/2), display.getSize().y*0.10);
 
             //Set up text
             start_text.setPosition(display.getSize().x/2, display.getSize().y*0.35);
