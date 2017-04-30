@@ -55,7 +55,7 @@ namespace chesspp
                 castling = false;
 
             }
-            // TODO 19/04/2017 : Add castling attribut
+
         }
 
         std::string Rook::classname() {
