@@ -86,6 +86,9 @@ namespace chesspp
         void ChessPlusPlusState::onLButtonReleased(int x, int y)
         {
             // TODO : Gestion des mouvements ici
+
+            // TODO 30/04/2017 : Vérifier que le movement est valid (roi pas en echec)
+            // TODO 30/04/2017 : Voir si on peut pas afficher que les mouvements possibles depuis la board
             if(!board.valid(p)) return;
             if(selected == board.end()) //If no piece was selected, we select the piece at the current clicked position
             {
