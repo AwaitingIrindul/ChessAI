@@ -77,7 +77,7 @@ if(NOT APPLE OR NOT BUILD_APPBUNDLE)
 	else()
 		add_executable(ChessPlusPlus
 			"src/Main.cpp"
-                )
+                src/artificial/NeuralNetwork.cpp src/artificial/NeuralNetwork.h)
 	endif()
 endif()
 set_property(TARGET ChessPlusPlus PROPERTY CXX_STANDARD 14)

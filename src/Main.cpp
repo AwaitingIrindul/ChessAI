@@ -2,6 +2,7 @@
 #include "app/StartMenuState.hpp"
 
 #include <iostream>
+#include <artificial/NeuralNetwork.h>
 
 /**
  * \brief
@@ -18,7 +19,7 @@ int main(int nargs, char const *const *args)
     chesspp::enableRedirection();
 #endif
 
-    try
+    /*try
     {
         sf::RenderWindow disp
         {
@@ -34,5 +35,15 @@ int main(int nargs, char const *const *args)
     {
         std::clog << typeid(e).name() << " caught in main: " << e.what() << std::endl;
         return EXIT_FAILURE;
+    }*/
+
+    NeuralNetwork nn(2, 2);
+    nn.addHiddenLayer(2);
+    auto input = std::vector<double>{0.7, 0.5};
+    auto out =  nn.feedforward(input);
+    std::cout<<"Out"<<std::endl;
+    for (int i = 0; i < out.size(); ++i) {
+        std::cout<<out[i]<<std::endl;
     }
+
 }
