@@ -5,19 +5,19 @@
 #include <vector>
 #include <iostream>
 #include "Player.h"
-#include "Move.h"
+
 
 namespace chesspp {
     namespace player {
         double Player::negamax(MoveWrapper& wrapper, const int depth, double alpha, double beta) {
-          /*  if(depth == 0) { // TODO 19/05/2017 : Or game is finished
+            if(depth == 0) { // TODO 19/05/2017 : Or game is finished
                 return evaluate();
             }
 
             std::vector<Move> moves = getAvailableMoves();
             MoveWrapper& nullRef = MoveWrapper::toReference(nullptr);
             double score = 0;
-            Move best;
+
             for(auto move : moves){
                 executeMove();
                 score = -negamax(nullRef, depth - 1, -beta, -alpha);
@@ -57,6 +57,10 @@ namespace chesspp {
         }
 
         void Player::undoMove() {
+
+        }
+
+        Player::Player(board::Board &board) : board(board) {
 
         }
     }

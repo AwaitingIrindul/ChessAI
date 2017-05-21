@@ -240,6 +240,10 @@ namespace chesspp
              */
             void promote(std::set<std::unique_ptr<chesspp::piece::Piece>>::const_iterator pawn, piece::Piece &newPiece);
         };
+
+        friend class Player;
+
+
     }
 }
 

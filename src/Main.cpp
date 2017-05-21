@@ -37,13 +37,4 @@ int main(int nargs, char const *const *args)
         return EXIT_FAILURE;
     }
 
-    /*NeuralNetwork nn(2, 2);
-    nn.addHiddenLayer(2);
-    auto input = std::vector<double>{0.7, 0.5};
-    auto out =  nn.feedforward(input);
-    std::cout<<"Out"<<std::endl;
-    for (int i = 0; i < out.size(); ++i) {
-        std::cout<<out[i]<<std::endl;
-    }*/
-
 }
