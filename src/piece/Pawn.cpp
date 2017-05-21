@@ -1,6 +1,8 @@
 #include "Pawn.hpp"
+#include "Bishop.hpp"
 
 #include <sstream>
+#include <iostream>
 
 namespace chesspp
 {
@@ -26,10 +28,17 @@ namespace chesspp
 
         void Pawn::tick(Position_t const &m)
         {
-            if(moves == 1 && m != pos)
-            { //moved just happened, en passant no longer allowed
-                en_passant = false;
-                //TODO : Refaire en passant
+            if(m == pos){
+                if(this->suit == "White"){
+                    if(pos.x == 3){
+                        // TODO 30/04/2017 : Promote here
+//                        board.promote(*this);   // Not working
+                    }
+                } else {
+                    if(pos.x == 7){
+                        // TODO 30/04/2017 : Promote here
+                    }
+                }
             }
         }
 
@@ -49,10 +58,6 @@ namespace chesspp
                 {
                     addTrajectory(Position_t(pos).move(facing, 2));
                 }
-            }
-            else if(moves == 1 && en_passant) //just moved 2 spaces forward
-            {
-                addCapturable(Position_t(pos).move(facing, -1)); //enable en passant
             }
 
             Position_t diagr = Position_t(pos).move(Rotate(facing, +1));

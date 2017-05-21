@@ -20,9 +20,11 @@ namespace chesspp
          * \brief
          * A chess piece.
          */
+        class King;
         class Piece
         {
             friend class ::chesspp::board::Board;
+            friend class ::chesspp::piece::King;
 
         public:
             using Position_t = config::BoardConfig::Position_t;
@@ -85,11 +87,15 @@ namespace chesspp
              * \note
              * Should not be overridden or shadowed by deriving classes.
              */
-            void makeTrajectory()
+            virtual void makeTrajectory()
             {
                 addCapturable(pos);
                 calcTrajectory();
             }
+
+            virtual std::string classname() {
+                return "Piece";
+            };
 
         protected:
             /**
@@ -147,6 +153,8 @@ namespace chesspp
              * \param tile The position to mark.
              */
             void removeCapturable(Position_t const &tile);
+
+
 
         private:
             /**

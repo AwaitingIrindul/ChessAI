@@ -15,7 +15,6 @@ namespace chesspp
         , s{s_}
         , c{pc}
         {
-            std::clog << "Creation of " << *this << std::endl;
         }
 
         void Piece::addTrajectory(Position_t const &tile)
@@ -47,7 +46,7 @@ namespace chesspp
 
         std::ostream &operator<<(std::ostream &os, Piece const &p)
         {
-            return os << "Piece (" << typeid(p).name() << ") \"" << p.suit << "\" \"" << p.pclass << "\" at " << p.pos << " having made " << p.moves << " moves";
+            return os << "Piece " << p.suit << " " << p.pclass << " at " << p.pos << " having made " << p.moves << " moves";
         }
     }
 }

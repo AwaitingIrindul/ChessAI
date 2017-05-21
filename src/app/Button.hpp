@@ -121,7 +121,7 @@ namespace chesspp
              */
             void setSelected(bool selected)
             {
-                if(selected) setColor(sf::Color::Blue);
+                if(selected) setColor(sf::Color::Red);
                 else setColor(sf::Color::Black);
             }
 

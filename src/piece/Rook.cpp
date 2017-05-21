@@ -1,6 +1,7 @@
 #include "Rook.hpp"
 
 #include <initializer_list>
+#include <iostream>
 
 namespace chesspp
 {
@@ -23,6 +24,8 @@ namespace chesspp
 
         void Rook::calcTrajectory()
         {
+
+
             //Rooks can move infinitely in the four straight directions
             using Dir = util::Direction;
             for(Dir d : {Dir::North
@@ -30,6 +33,9 @@ namespace chesspp
                         ,Dir::South
                         ,Dir::West})
             {
+
+                if(moves == 0)
+                    castling = true;
                 Position_t t;
                 for(signed i = 1; board.valid(t = Position_t(pos).move(d, i)); ++i)
                 {
@@ -41,6 +47,19 @@ namespace chesspp
                     else break; //can't jump over pieces
                 }
             }
+        }
+
+        void Rook::tick(const Piece::Position_t &m) {
+            if(moves == 1 && m != pos)
+            { //moved just happened, castling no longer allowed
+                castling = false;
+
+            }
+
+        }
+
+        std::string Rook::classname() {
+            return "Rook";
         }
     }
 }

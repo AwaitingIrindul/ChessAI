@@ -8,11 +8,21 @@ namespace chesspp
 {
     namespace piece
     {
-        class King
-        : public virtual Piece
+        class King : public virtual Piece
         {
+            bool castling;
+        private:
+            bool bigCastle = false;
+            bool smallCastle = false;
         public:
             King(board::Board &b, Position_t const &pos, Suit_t const &s, Class_t const &pc);
+            virtual void tick(Position_t const &p) override;
+
+            virtual void makeTrajectory() override
+            {
+                calcTrajectory();
+            }
+            std::string classname() override;
 
         protected:
             virtual void calcTrajectory() override;

@@ -3,6 +3,7 @@
 #include "piece/Piece.hpp"
 
 #include <iostream>
+#include <piece/Pawn.hpp>
 
 namespace chesspp
 {
@@ -13,12 +14,13 @@ namespace chesspp
         {
             for(auto const &slot : conf.initialLayout())
             {
+
                 pieces.emplace(factory().at(slot.second.first)(*this, slot.first, slot.second.second));
             }
 
             for(auto const &p : pieces)
             {
-                p->makeTrajectory();
+                    p->makeTrajectory();
             }
         }
 
@@ -26,6 +28,8 @@ namespace chesspp
         {
             for(auto const &p : *this)
             {
+
+
                 if(p->pos == pos)
                 {
                     return true;
@@ -85,6 +89,9 @@ namespace chesspp
         -> MovementsRange
         {
             auto range = capturings.equal_range(find(p));
+
+            //Visiblement la y a plys de respect et on retourne ce qu'on veut..
+            //Retour casté en MovementsRange je crois.
             return {{range.first, range.second}};
         }
         auto Board::pieceCapturable(piece::Piece const &p) noexcept
@@ -94,20 +101,44 @@ namespace chesspp
             return {{range.first, range.second}};
         }
 
-        void Board::update(Position_t const &pos)
+        void Board::update(Position_t const &pos, Suit turn)
         {
             trajectories.clear();
             capturings.clear();
             capturables.clear();
             for(auto &p : pieces)
             {
+                if(p->classname() != "King"){
+                    p->tick(pos);
+                    p->makeTrajectory();
+                }
+            }
 
-                p->tick(pos);
-                p->makeTrajectory();
+
+            auto king1 = std::find_if(pieces.begin(), pieces.end(),
+                                   [&](auto &p){
+                                       return (p->suit == turn) && (p->classname() == "King");
+                                   }
+            );
+
+            auto king2 = std::find_if(pieces.begin(), pieces.end(),
+                                      [&](auto &p){
+                                          return (p->suit != turn) && (p->classname() == "King");
+                                      }
+            );
+
+            if(king1 != pieces.end()){
+                (*king1)->tick(pos);
+                (*king1)->makeTrajectory();
+            }
+
+            if(king2 != pieces.end()) {
+                (*king2)->tick(pos);
+                (*king2)->makeTrajectory();
             }
         }
 
-        bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable)
+        bool Board::capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable, Suit turn)
         {
             if(source == pieces.end())
             {
@@ -125,10 +156,17 @@ namespace chesspp
             }
 
             pieces.erase(capturable->first);
-            std::clog << "Capture: ";
-            return move(source, target); //re-use existing code
+            return move(source, target, turn); //re-use existing code
         }
-        bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target)
+
+        void Board::promote(Pieces_t::const_iterator pawn, piece::Piece &newPiece)
+        {
+            pieces.erase(pawn);
+            std::unique_ptr<piece::Piece> newPiecePointer(&newPiece);
+            pieces.insert(std::move(newPiecePointer));
+        }
+
+        bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target, Suit turn)
         {
             if(source == pieces.end())
             {
@@ -158,11 +196,9 @@ namespace chesspp
                 return false;
             }
 
-            std::clog << "Moved piece at " << (*source)->pos << std::flush;
             auto t = target->second;
             (*source)->move(t);
-            update(t);
-            std::clog << " to " << t << std::endl;
+            update(t, turn);
             return true;
         }
     }

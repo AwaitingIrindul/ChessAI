@@ -10,12 +10,15 @@
 #include <functional>
 #include <typeinfo>
 #include <algorithm>
+#include <piece/Pawn.hpp>
 
 namespace chesspp
 {
     namespace piece
     {
         class Piece;
+        class King;
+        class Pawn;
     }
     namespace board
     {
@@ -27,6 +30,7 @@ namespace chesspp
          */
         class Board
         {
+             friend class ::chesspp::piece::King;
         public:
             using BoardSize_t = config::BoardConfig::BoardSize_t;
             using Position_t = config::BoardConfig::Position_t;
@@ -196,7 +200,7 @@ namespace chesspp
             MovementsRange pieceCapturable(piece::Piece const &p) noexcept;
 
         private:
-            void update(Position_t const &pos);
+            void update(Position_t const &pos, Suit turn);
         public:
             /**
              * \brief
@@ -207,7 +211,7 @@ namespace chesspp
              * \param capturable The location being captured.
              * \return true if the capture was successful, false otherwise.
              */
-            bool capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable);
+            bool capture(Pieces_t::iterator source, Movements_t::const_iterator target, Movements_t::const_iterator capturable, Suit turn);
             /**
              * \brief
              * Move a piece without capturing.
@@ -216,7 +220,7 @@ namespace chesspp
              * \param target The new location of the source piece.
              * \return true if the capture was successful, false otherwise.
              */
-            bool move(Pieces_t::iterator source, Movements_t::const_iterator target);
+            bool move(Pieces_t::iterator source, Movements_t::const_iterator target, Suit turn);
 
             /**
              * \brief
@@ -229,6 +233,12 @@ namespace chesspp
             {
                 return pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
             }
+
+            /**
+             * Promotes the given pawn
+             * @param pawn
+             */
+            void promote(std::set<std::unique_ptr<chesspp::piece::Piece>>::const_iterator pawn, piece::Piece &newPiece);
         };
     }
 }
