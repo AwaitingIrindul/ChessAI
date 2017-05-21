@@ -5,6 +5,9 @@
 
 #include <iostream>
 #include <algorithm>
+#include <piece/Bishop.hpp>
+#include <piece/Rook.hpp>
+#include <piece/Knight.hpp>
 
 namespace chesspp
 {
@@ -130,7 +133,6 @@ namespace chesspp
                     }
                     { //Creation of second scope to allow reusage of it
 
-
                         auto it = std::find_if(board.pieceTrajectories().begin(),
                                                board.pieceTrajectories().end(),
                                                [&](board::Board::Movements_t::value_type const &m)
@@ -147,6 +149,58 @@ namespace chesspp
                         }
                     }
                 }();
+
+                // Si la pièce est un pion et qu'elle est en position de promote
+                if((*selected)->pclass == "Pawn" && (((*selected)->suit == "White" && (*selected)->pos.y == 0) || (*selected)->suit == "Black" && (*selected)->pos.y == 7))
+                {
+                    std::cout << "Choose your new piece :" << std::endl;
+                    std::cout << "1 : pawn" << std::endl;
+                    std::cout << "2 : bishop" << std::endl;
+                    std::cout << "3 : rook" << std::endl;
+                    std::cout << "4 : knight" << std::endl;
+
+                    int newPieceIndex;
+                    do {
+                        std::cin >> newPieceIndex;
+                    } while(newPieceIndex < 1 && newPieceIndex > 4);
+
+                    piece::Piece *newPiece = NULL;
+                    switch(newPieceIndex)
+                    {
+                        case 1:
+                        {
+//                            *newPiece = new piece::Pawn(board, (*selected)->pos, (*selected)->suit, (*selected)->pclass, ((piece::Pawn *)((*selected).get())).);
+                            newPiece = (*selected).get();
+                            break;
+                        }
+                        case 2:
+                        {
+                            piece::Bishop *bishop = new piece::Bishop(board, (*selected)->pos, (*selected)->suit, "Bishop");
+                            newPiece = (piece::Piece *) bishop;
+                            break;
+                        }
+                        case 3:
+                        {
+                                piece::Rook *rook = new piece::Rook(board, (*selected)->pos, (*selected)->suit, "Rook");
+                            newPiece = (piece::Piece *) rook;
+                            break;
+                        }
+                        case 4:
+                        {
+                            piece::Knight *knight = new piece::Knight(board, (*selected)->pos, (*selected)->suit, "Knight");
+                            newPiece = (piece::Piece *) knight;
+                            break;
+                        }
+                        default:
+                        {
+                            newPiece = (*selected).get();
+                            break;
+                        }
+                    }
+
+                    board.promote(selected, *newPiece);
+                }
+
                 selected = board.end(); //deselect
             }
         }

@@ -1,4 +1,5 @@
 #include "Pawn.hpp"
+#include "Bishop.hpp"
 
 #include <sstream>
 #include <iostream>

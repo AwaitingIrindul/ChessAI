@@ -3,6 +3,7 @@
 #include "piece/Piece.hpp"
 
 #include <iostream>
+#include <piece/Pawn.hpp>
 
 namespace chesspp
 {
@@ -13,6 +14,7 @@ namespace chesspp
         {
             for(auto const &slot : conf.initialLayout())
             {
+
                 pieces.emplace(factory().at(slot.second.first)(*this, slot.first, slot.second.second));
             }
 
@@ -156,6 +158,14 @@ namespace chesspp
             pieces.erase(capturable->first);
             return move(source, target, turn); //re-use existing code
         }
+
+        void Board::promote(Pieces_t::const_iterator pawn, piece::Piece &newPiece)
+        {
+            pieces.erase(pawn);
+            std::unique_ptr<piece::Piece> newPiecePointer(&newPiece);
+            pieces.insert(std::move(newPiecePointer));
+        }
+
         bool Board::move(Pieces_t::iterator source, Movements_t::const_iterator target, Suit turn)
         {
             if(source == pieces.end())

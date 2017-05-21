@@ -10,6 +10,7 @@
 #include <functional>
 #include <typeinfo>
 #include <algorithm>
+#include <piece/Pawn.hpp>
 
 namespace chesspp
 {
@@ -17,6 +18,7 @@ namespace chesspp
     {
         class Piece;
         class King;
+        class Pawn;
     }
     namespace board
     {
@@ -231,6 +233,12 @@ namespace chesspp
             {
                 return pos.isWithin(Position_t::Origin(), {config.boardWidth(), config.boardHeight()});
             }
+
+            /**
+             * Promotes the given pawn
+             * @param pawn
+             */
+            void promote(std::set<std::unique_ptr<chesspp::piece::Piece>>::const_iterator pawn, piece::Piece &newPiece);
         };
     }
 }
