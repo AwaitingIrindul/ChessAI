@@ -151,7 +151,7 @@ namespace chesspp
                 }();
 
                 // Si la pièce est un pion et qu'elle est en position de promote
-                if((*selected)->pclass == "Pawn" && (((*selected)->suit == "White" && (*selected)->pos.y == 5) || (*selected)->suit == "Black" && (*selected)->pos.y == 7))
+                if((*selected)->pclass == "Pawn" && (((*selected)->suit == "White" && (*selected)->pos.y == 0) || (*selected)->suit == "Black" && (*selected)->pos.y == 7))
                 {
                     std::cout << "Choose your new piece :" << std::endl;
                     std::cout << "1 : pawn" << std::endl;
