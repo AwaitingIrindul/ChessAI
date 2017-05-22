@@ -153,18 +153,19 @@ public class MoveList implements Iterable<Move>, Serializable {
     }
 
     /**
-     * Get the move containing the destination.
+     * Get the moves containing the destination.
      *
      * @param dest destination position
      * @return     move containing given destination
      */
-    public final Move getMoveByDest(final Position dest) {
+    public final ArrayList<Move> getMovesByDest(final Position dest) {
+        ArrayList<Move> moves = new ArrayList<>();
         for (Move move : this) {
             if (dest.equals(move.getDest())) {
-                return move;
+                moves.add(move);
             }
         }
-        return null;
+        return moves;
     }
 
     /**

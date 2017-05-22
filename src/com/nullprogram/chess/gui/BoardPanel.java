@@ -23,6 +23,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
@@ -308,10 +310,19 @@ public class BoardPanel extends JComponent
             } else if (moves != null && moves.containsDest(pos)) {
                 /* Move selected piece */
                 mode = Mode.WAIT;
-                Move move = moves.getMoveByDest(pos);
+
+                ArrayList<Move> movesAtDest = moves.getMovesByDest(pos);
+                Move move = null;
+
+                if(movesAtDest.size() > 1) {
+                    move = selectUpgrade(movesAtDest);
+                } else move = movesAtDest.get(0);
+
+                selectedMove = move;
+
                 selected = null;
                 moves = null;
-                selectedMove = move;
+
                 latch.countDown();
             } else {
                 /* Select this position */
@@ -322,6 +333,30 @@ public class BoardPanel extends JComponent
                 }
             }
         }
+    }
+
+    /**
+     * Permet de sélectionner une promotion parmis les mouvements donnés
+     * @param moves
+     * @return
+     */
+    Move selectUpgrade(ArrayList<Move> moves) {
+        System.out.println("Choisissez le mouvement à effectuer :");
+        int i = 1;
+        for(Move move : moves) {
+            Piece.PieceThatCanBeUpgradedTo upgrade = move.getNext().getNext().getReplacement();
+            System.out.println(i + " : " + upgrade.toString());
+            i++;
+        }
+
+        int selection;
+        Scanner scanner = new Scanner(System.in);
+        do {
+            System.out.print("> ");
+            selection = scanner.nextInt();
+        } while (selection < 1 && selection > moves.size());
+
+        return moves.get(selection - 1);
     }
 
     /**

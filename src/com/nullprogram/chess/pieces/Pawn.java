@@ -8,13 +8,15 @@ import com.nullprogram.chess.Position;
 
 /**
  * The Chess pawn.
- *
+ * <p>
  * This class describes the movement and capture behavior of the pawn
  * chess piece.
  */
 public class Pawn extends Piece {
 
-    /** Serialization identifier. */
+    /**
+     * Serialization identifier.
+     */
     private static final long serialVersionUID = 456095470L;
 
     /**
@@ -33,35 +35,46 @@ public class Pawn extends Piece {
         Board board = getBoard();
         int dir = direction();
         Position dest = new Position(pos, 0, 1 * dir);
+        boolean upgradeable = false;
 
         Move first;
-        for(PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
+        boolean firstAvailable = false;     // true if front cell is available
+        for (PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
             first = new Move(pos, dest);
-            addUpgrade(first, piece);
-            if (list.addMove(first) && !moved()) {
-                list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
-            }
+            if (addUpgrade(first, piece)) {
+                firstAvailable = list.addMove(first);
+                upgradeable = true;
+            } else break;
+        }
+        if (!upgradeable) {
+            first = new Move(pos, dest);
+            firstAvailable = list.addMove(first);
+        }
+        if (firstAvailable && !moved()) {
+            list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
         }
 
         Move captureLeft;
-        for(PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
-            captureLeft = new Move(pos, new Position(pos, -1, 1 * dir));
-            addUpgrade(captureLeft, piece);
-            if (list.addMove(captureLeft) && !moved()) {
-                list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
+        if (upgradeable) {
+            for (PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
+                captureLeft = new Move(pos, new Position(pos, -1, 1 * dir));
+                addUpgrade(captureLeft, piece);
+                list.addCaptureOnly(captureLeft);
             }
-            addUpgrade(captureLeft, piece);
+        } else {
+            captureLeft = new Move(pos, new Position(pos, -1, 1 * dir));
             list.addCaptureOnly(captureLeft);
         }
 
         Move captureRight;
-        for(PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
-            captureRight = new Move(pos, new Position(pos,  1, 1 * dir));
-            addUpgrade(captureRight, piece);
-            if (list.addMove(captureRight) && !moved()) {
-                list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
+        captureRight = new Move(pos, new Position(pos, 1, 1 * dir));
+        if (upgradeable) {
+            for (PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
+                captureRight = new Move(pos, new Position(pos, 1, 1 * dir));
+                addUpgrade(captureRight, piece);
+                list.addCaptureOnly(captureRight);
             }
-            addUpgrade(captureRight, piece);
+        } else {
             list.addCaptureOnly(captureRight);
         }
 
@@ -69,15 +82,15 @@ public class Pawn extends Piece {
     }
 
 
-
     /**
      * Add the upgrade actions to the given move if needed.
      *
      * @param move the move to be modified
+     * @return true if upgradeable
      */
-    private void addUpgrade(final Move move, PieceThatCanBeUpgradedTo replacement) {
+    private boolean addUpgrade(final Move move, PieceThatCanBeUpgradedTo replacement) {
         if (move.getDest().getY() != upgradeRow()) {
-            return;
+            return false;
         }
         move.setNext(new Move(move.getDest(), null)); // remove the pawn
         Move upgrade = new Move(null, move.getDest());
@@ -85,6 +98,7 @@ public class Pawn extends Piece {
         upgrade.setReplacement(replacement);
         upgrade.setReplacementSide(getSide());
         move.getNext().setNext(upgrade);              // add a queen
+        return true;
     }
 
     /**
