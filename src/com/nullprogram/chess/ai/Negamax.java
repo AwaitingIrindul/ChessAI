@@ -3,8 +3,7 @@ package com.nullprogram.chess.ai;
 import com.nullprogram.chess.*;
 import com.nullprogram.chess.pieces.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Irindul on 22/05/2017.
@@ -35,8 +34,8 @@ public class Negamax implements Player {
     private Board board;
     private Piece.Side side;
     private BoardRepete boardCounter;
-    long timeLimit = 50000;
-    int infinity = 1000000;
+    long timeLimit = 10000;
+    int infinity = 10000000;
 
     public Negamax(int maxDepth) {
         this.maxDepth = maxDepth;
@@ -64,9 +63,9 @@ public class Negamax implements Player {
 
         boardCounter.increment(board);
 
-        MoveList moves = board.allMoves(side, true);
-        moves.shuffle();
-        Move best = moves.peek();
+        MoveList moves = generateOrderedMoves(side);
+        moves.sort(moveComparator);
+        Move best = moves.first();
 
 
 
@@ -130,14 +129,14 @@ public class Negamax implements Player {
 
 
         int bestValue = Integer.MIN_VALUE;
-        Move best = moves.peek();
+        Move best = moves.first();
         int value;
         long currentTime;
 
         for(Move move : moves){
             currentTime = System.currentTimeMillis();
             if(currentTime >= endTime){
-                System.out.println("Time's up bitches");
+                System.out.println("Time's up");
 
                 cutoff = false;
                 return null;
@@ -175,6 +174,7 @@ public class Negamax implements Player {
 
     private int negamax(int depth, int alpha, int beta, Piece.Side side, long endTime) {
         nodeNb++;
+
 
         //We extend search if one player is in check (to fasten checkmate)
         if(board.check()){
@@ -215,7 +215,7 @@ public class Negamax implements Player {
             //TODO Quiescence search
         }
 
-        MoveList moves = board.allMoves(side, true);
+        MoveList moves = generateOrderedMoves(side);
 
         if(moves.isEmpty()) {
             if(board.check()){
@@ -224,11 +224,15 @@ public class Negamax implements Player {
                 return STALEMATE; //Stalemate
             }
         } else {
-            //TODO move ordering
+
+            // Add killer moves to front of list
+            orderMoves(moves, infos);
+
+
             int bestValue = Integer.MIN_VALUE;
             int value;
             long currentTime;
-            Move bestMove = moves.peek();
+            Move bestMove = moves.first();
 
             for (Move move : moves){
                 if(move.getReplacement() != null)
@@ -267,6 +271,37 @@ public class Negamax implements Player {
             return bestValue;
         }
 
+    }
+
+
+    private MoveList generateOrderedMoves(Piece.Side side) {
+        MoveList psmoves = board.allMoves(side, true);
+        MoveList moves = new MoveList(board);
+
+        Set<Move> setmoves = new HashSet<Move>(256);
+
+        for(Move m : psmoves) {
+            if(setmoves.add(m)) {
+                if(m.getCaptured() != null || m.getReplacement() != null) {
+                    moves.setFirst(m);
+                }
+                else {
+                    moves.add(m);
+                }
+            }
+        }
+        return moves;
+    }
+
+    private void orderMoves(MoveList moves, BoardInfo infos) {
+        if(infos != null) {
+            if(infos.getSecondBestMove() != null) {
+                moves.setFirst(infos.getSecondBestMove());
+                moves.setFirst(infos.getSecondBestMove());
+            }
+            moves.setFirst(infos.getBestMove());
+            moves.setFirst(infos.getBestMove());
+        }
     }
 
     private double evaluate(final Board b) {
@@ -364,6 +399,22 @@ public class Negamax implements Player {
             transpositionTable.put(board.id(), new BoardInfo(bestValue, best, type, depth));
         }
     }
+
+    private Comparator<Move> moveComparator = new Comparator<Move>() {
+        public int compare (Move move1, Move move2) {
+            int score1, score2;
+
+            board.move(move1);
+            score1 = (int) evaluate(board);
+            board.undo();
+
+            board.move(move2);
+            score2 = (int)evaluate(board);
+            board.undo();
+
+            return score1 - score2;
+        }
+    };
 
 
 }

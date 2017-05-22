@@ -1,10 +1,7 @@
 package com.nullprogram.chess;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Safe list of moves.
@@ -219,7 +216,7 @@ public class MoveList implements Iterable<Move>, Serializable {
 
     public final void setFirst(Move move){
         moves.remove(move);
-        moves.add(move);
+        moves.add(0, move);
     }
 
     @Override
@@ -229,5 +226,13 @@ public class MoveList implements Iterable<Move>, Serializable {
 
     public List<Move> getMoves() {
         return moves;
+    }
+
+    public void sort(Comparator<Move> comparator) {
+        moves.sort(comparator);
+    }
+
+    public Move first(){
+       return moves.get(0);
     }
 }
