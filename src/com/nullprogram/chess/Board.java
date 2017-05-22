@@ -3,27 +3,36 @@ package com.nullprogram.chess;
 import com.nullprogram.chess.boards.BoardFactory;
 import com.nullprogram.chess.pieces.King;
 import com.nullprogram.chess.pieces.PieceFactory;
+
 import java.io.Serializable;
 
 /**
  * Board data structure.
- *
+ * <p>
  * After the initial setup, the board <i>must</i> only be modified
  * through move transaction. This allows undo() and copy(), which many
  * other things depends on, to work properly.
  */
 public abstract class Board implements Serializable {
 
-    /** Versioning for object serialization. */
+    /**
+     * Versioning for object serialization.
+     */
     private static final long serialVersionUID = 244162996302362607L;
 
-    /** The internal board array. */
+    /**
+     * The internal board array.
+     */
     private Piece[][] board;
 
-    /** The size of this game board. */
+    /**
+     * The size of this game board.
+     */
     private int boardWidth, boardHeight;
 
-    /** Moves taken in this game so far. */
+    /**
+     * Moves taken in this game so far.
+     */
     private final MoveList moves = new MoveList(this);
 
     /**
@@ -36,7 +45,7 @@ public abstract class Board implements Serializable {
     /**
      * Determine if board is in a state of checkmate.
      *
-     * @param       side side to be checked
+     * @param side side to be checked
      * @return true if board is in a state of checkmate
      */
     public abstract Boolean checkmate(Piece.Side side);
@@ -44,7 +53,7 @@ public abstract class Board implements Serializable {
     /**
      * Determine if board is in a state of stalemate.
      *
-     * @param       side side to be checked
+     * @param side side to be checked
      * @return true if board is in a state of stalemate
      */
     public abstract Boolean stalemate(Piece.Side side);
@@ -53,14 +62,14 @@ public abstract class Board implements Serializable {
      * Determine if board is in a state of check.
      *
      * @param side side to check for check
-     * @return     true if board is in a state of check
+     * @return true if board is in a state of check
      */
     public abstract Boolean check(Piece.Side side);
 
     /**
      * Determine if board is in a state of check.
      *
-     * @return     true if board is in a state of check
+     * @return true if board is in a state of check
      */
     public final Boolean check() {
         return check(Piece.Side.WHITE) || check(Piece.Side.BLACK);
@@ -69,7 +78,7 @@ public abstract class Board implements Serializable {
     /**
      * Determine if board is in checkmate.
      *
-     * @return     true if board is in checkmate
+     * @return true if board is in checkmate
      */
     public final Boolean checkmate() {
         return checkmate(Piece.Side.WHITE) || checkmate(Piece.Side.BLACK);
@@ -78,7 +87,7 @@ public abstract class Board implements Serializable {
     /**
      * Determine if board is in stalemate.
      *
-     * @return     true if board is in stalemate
+     * @return true if board is in stalemate
      */
     public final Boolean stalemate() {
         return stalemate(Piece.Side.WHITE) || stalemate(Piece.Side.BLACK);
@@ -88,7 +97,7 @@ public abstract class Board implements Serializable {
      * Find the king belonging to the given side.
      *
      * @param side whose king
-     * @return     the king's board position
+     * @return the king's board position
      */
     public final Position findKing(final Piece.Side side) {
         for (int y = 0; y < getHeight(); y++) {
@@ -96,7 +105,7 @@ public abstract class Board implements Serializable {
                 Position pos = new Position(x, y);
                 Piece p = getPiece(pos);
                 if (p instanceof King &&
-                    p.getSide() == side) {
+                        p.getSide() == side) {
 
                     return pos;
                 }
@@ -170,7 +179,7 @@ public abstract class Board implements Serializable {
      * Get the Piece at the given Position.
      *
      * @param pos the position on the board
-     * @return    the Piece at the position
+     * @return the Piece at the position
      */
     public final Piece getPiece(final Position pos) {
         return board[pos.getX()][pos.getY()];
@@ -201,22 +210,15 @@ public abstract class Board implements Serializable {
             move.setCaptured(getPiece(b));
             setPiece(b, getPiece(a));
             setPiece(a, null);
-            Piece piece = getPiece(b);
-            if(piece != null){
-                piece.setPosition(b);
-                piece.incMoved();
-            } else 
-                System.out.println("Bug");
-                
-                
-          //  getPiece(b).setPosition(b);
-               
+            getPiece(b).setPosition(b);
+            getPiece(b).incMoved();
+
         } else if (a != null && b == null) {
             move.setCaptured(getPiece(a));
             setPiece(a, null);
         } else {
             setPiece(b, PieceFactory.create(move.getReplacement(),
-                                            move.getReplacementSide()));
+                    move.getReplacementSide()));
         }
         execMove(move.getNext());
     }
@@ -243,11 +245,8 @@ public abstract class Board implements Serializable {
         if (a != null && b != null) {
             setPiece(a, getPiece(b));
             setPiece(b, move.getCaptured());
-            Piece p = getPiece(a);
-            if(p != null){
-                getPiece(a).setPosition(a);
-                getPiece(a).decMoved();
-            }
+            getPiece(a).setPosition(a);
+            getPiece(a).decMoved();
 
         } else if (a != null && b == null) {
             setPiece(a, move.getCaptured());
@@ -269,7 +268,7 @@ public abstract class Board implements Serializable {
      * Return true if position has no piece on it.
      *
      * @param pos position to be tested
-     * @return    emptiness of position
+     * @return emptiness of position
      */
     public final Boolean isEmpty(final Position pos) {
         return getPiece(pos) == null;
@@ -280,7 +279,7 @@ public abstract class Board implements Serializable {
      *
      * @param pos  position to be tested
      * @param side side of the piece wanting to move
-     * @return    emptiness of position
+     * @return emptiness of position
      */
     public final Boolean isEmpty(final Position pos, final Piece.Side side) {
         Piece p = getPiece(pos);
@@ -294,18 +293,18 @@ public abstract class Board implements Serializable {
      * Return true if position is on the board.
      *
      * @param pos position to be tested
-     * @return    validity of position
+     * @return validity of position
      */
     public final Boolean inRange(final Position pos) {
         return (pos.getX() >= 0) && (pos.getY() >= 0) &&
-               (pos.getX() < boardWidth) && (pos.getY() < boardHeight);
+                (pos.getX() < boardWidth) && (pos.getY() < boardHeight);
     }
 
     /**
      * Return true if position is in range <i>and</i> empty.
      *
      * @param pos position to be tested
-     * @return    validity of position
+     * @return validity of position
      */
     public final Boolean isFree(final Position pos) {
         return inRange(pos) && isEmpty(pos);
@@ -316,7 +315,7 @@ public abstract class Board implements Serializable {
      *
      * @param pos  position to be tested
      * @param side side of the piece wanting to move
-     * @return     validity of position
+     * @return validity of position
      */
     public final Boolean isFree(final Position pos, final Piece.Side side) {
         return inRange(pos) && isEmpty(pos, side);
@@ -340,7 +339,7 @@ public abstract class Board implements Serializable {
      *
      * @param side  side to get moves for
      * @param check check for check
-     * @return      list of all moves
+     * @return list of all moves
      */
     public final MoveList allMoves(final Piece.Side side, final boolean check) {
         MoveList list = new MoveList(this, false);

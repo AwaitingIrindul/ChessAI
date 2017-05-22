@@ -82,7 +82,7 @@ public class Negamax implements Player {
             }
 
             //Can be stopped before reaching full depth if running out of time
-            Move uncheckMove = rootNegamax(moves, depth, -infinity, infinity, endTime, side);
+            Move uncheckMove = rootNegamax(moves, depth, -infinity, infinity, endTime, Piece.opposite(side));
 
             if(uncheckMove != null){
                 best = uncheckMove;
@@ -108,7 +108,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-        if(infos != null && infos.getDepth() >= depth){
+        /*if(infos != null && infos.getDepth() >= depth){
 
             if(infos.getType() == BoardInfo.EXACT){
                 //Better move
@@ -124,7 +124,9 @@ public class Negamax implements Player {
             if(alpha >= beta){ //Alpha-beta pruning
                 return  infos.getBestMove();
             }
-        }
+        }*/
+
+
 
         int bestValue = Integer.MIN_VALUE;
         Move best = moves.peek();
@@ -142,7 +144,7 @@ public class Negamax implements Player {
 
 
             board.move(move);
-            value = -negamax(depth -1, -beta, -alpha, Piece.opposite(side), endTime);
+            value = -negamax(depth -1, -beta, -alpha, side, endTime);
             board.undo();
 
             //If we have a better value :
@@ -158,7 +160,6 @@ public class Negamax implements Player {
 
             // Alpha-beta pruning
             if(alpha >= beta) {
-                System.out.println("Pruning");
                 break;
             }
 
@@ -173,7 +174,7 @@ public class Negamax implements Player {
 
     private int negamax(int depth, int alpha, int beta, Piece.Side side, long endTime) {
         nodeNb++;
-        
+
         //We extend search if one player is in check (to fasten checkmate)
         if(board.check()){
             depth++;
@@ -181,7 +182,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-        if(infos != null && infos.getDepth() >= depth) {
+       /* if(infos != null && infos.getDepth() >= depth) {
 
             if (infos.getType() == BoardInfo.EXACT) {
                 //Better move
@@ -197,7 +198,7 @@ public class Negamax implements Player {
             if (alpha >= beta) { //Alpha-beta pruning
                 return infos.getValue();
             }
-        }
+        }*/
 
         //We avoid repetitions
       /*  if(boardCounter.isRepetition(board)){
@@ -209,7 +210,7 @@ public class Negamax implements Player {
 
         //Base case
         if(depth == 0) {
-            return evaluate(board);
+            return (int)evaluate(board);
             //TODO Quiescence search
         }
 
@@ -219,8 +220,6 @@ public class Negamax implements Player {
             if(board.check()){
                 return -MATE; //Negation because it's called with value = -negamax()
             } else {
-                System.out.println("?");
-                
                 return STALEMATE; //Stalemate
             }
         } else {
@@ -240,14 +239,11 @@ public class Negamax implements Player {
                     return Integer.MIN_VALUE;
                 }
 
-                System.out.println(move + " " + side);
-                
                 //See if there is a best value :
                 board.move(move);
-                System.out.println("Negamax descente");
                 value = -negamax(depth-1, -beta, -alpha, Piece.opposite(side), endTime);
-                System.out.println("Negamax remontée");
-                
+                board.undo();
+
                 if(value > bestValue) {
                     bestValue = value;
                     bestMove = move;
@@ -272,22 +268,25 @@ public class Negamax implements Player {
 
     }
 
-    private int evaluate(Board b) {
-        // TODO: 22/05/2017 Change
+    private double evaluate(final Board b) {
         double material = materialValue(b);
-       /* double kingSafety = kingInsafetyValue(b);
+        double kingSafety = kingInsafetyValue(b);
         double mobility = mobilityValue(b);
-        return material * wMaterial +
-                kingSafety * wSafety +
-                mobility * wMobility;*/
-       return (int)material;
+        return material * 1.0 +
+                kingSafety * 0.15 +
+                mobility * 0.01;
     }
 
+    /**
+     * Add up the material value of the board only.
+     *
+     * @param b board to be evaluated
+     * @return  material value of the board
+     */
     private double materialValue(final Board b) {
         double value = 0;
         for (int y = 0; y < b.getHeight(); y++) {
             for (int x = 0; x < b.getWidth(); x++) {
-
                 Position pos = new Position(x, y);
                 Piece p = b.getPiece(pos);
                 if (p != null) {
@@ -296,6 +295,49 @@ public class Negamax implements Player {
             }
         }
         return value * side.value();
+    }
+
+    /**
+     * Determine the safety of each king. Higher is worse.
+     *
+     * @param b board to be evaluated
+     * @return  king insafety score
+     */
+    private double kingInsafetyValue(final Board b) {
+        return kingInsafetyValue(b, Piece.opposite(side)) -
+                kingInsafetyValue(b, side);
+    }
+
+    /**
+     * Helper function: determine safety of a single king.
+     *
+     * @param b board to be evaluated
+     * @param s side of king to be checked
+     * @return king insafety score
+     */
+    private double kingInsafetyValue(final Board b, final Piece.Side s) {
+        /* Trace lines away from the king and count the spaces. */
+        Position king = b.findKing(s);
+        if (king == null) {
+            /* Weird, but may happen during evaluation. */
+            return Double.POSITIVE_INFINITY;
+        }
+        MoveList list = new MoveList(b, false);
+        /* Take advantage of the Rook and Bishop code. */
+        Rook.getMoves(b.getPiece(king), list);
+        Bishop.getMoves(b.getPiece(king), list);
+        return list.size();
+    }
+
+    /**
+     * Mobility score for this board.
+     *
+     * @param b board to be evaluated
+     * @return  score for this board
+     */
+    private double mobilityValue(final Board b) {
+        return b.allMoves(side, false).size() -
+                b.allMoves(Piece.opposite(side), false).size();
     }
 
 
