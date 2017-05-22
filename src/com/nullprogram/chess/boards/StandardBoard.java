@@ -3,12 +3,14 @@ package com.nullprogram.chess.boards;
 import com.nullprogram.chess.Board;
 import com.nullprogram.chess.Piece;
 import com.nullprogram.chess.Position;
+import com.nullprogram.chess.ZobristHash;
 import com.nullprogram.chess.pieces.Bishop;
 import com.nullprogram.chess.pieces.King;
 import com.nullprogram.chess.pieces.Knight;
 import com.nullprogram.chess.pieces.Pawn;
 import com.nullprogram.chess.pieces.Queen;
 import com.nullprogram.chess.pieces.Rook;
+
 
 /**
  * The board for a standard game of chess.
@@ -154,6 +156,7 @@ public class StandardBoard extends Board {
 
     @Override
     public long id() {
-        return 0;
+        // TODO: 22/05/2017 APPELER LA FONCTION DE HASH ZOBRIST pour get l'id du board
+        return ZobristHash.getKeyForBoard(this);
     }
 }

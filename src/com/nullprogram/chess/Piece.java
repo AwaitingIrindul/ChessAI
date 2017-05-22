@@ -21,6 +21,9 @@ public abstract class Piece implements Serializable {
     /** Versioning for object serialization. */
     private static final long serialVersionUID = -214124732216708977L;
 
+    /** The type of piece it belongs to. */
+    private char pieceClassName;
+
     /** The side this piece belongs to. */
     private Side side;
 
@@ -148,6 +151,28 @@ public abstract class Piece implements Serializable {
     public final void setSide(final Side owner) {
         side = owner;
     }
+
+    /**
+     * Get the class name for this piece.
+     *
+     * @return the class name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the class name for this piece.
+     *
+     * @param name side the new side
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+
+
 
     /**
      * Get the side for this piece.
