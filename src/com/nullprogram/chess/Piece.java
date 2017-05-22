@@ -73,6 +73,10 @@ public abstract class Piece implements Serializable {
         }
     }
 
+    public enum PieceThatCanBeUpgradedTo {
+        ROOK, KNIGHT, BISHOP;
+    }
+
     /**
      * When creating a piece, you must always choose a side.
      */

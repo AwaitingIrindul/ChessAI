@@ -33,35 +33,56 @@ public class Pawn extends Piece {
         Board board = getBoard();
         int dir = direction();
         Position dest = new Position(pos, 0, 1 * dir);
-        Move first = new Move(pos, dest);
-        addUpgrade(first);
-        if (list.addMove(first) && !moved()) {
-            list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
-        }
-        Move captureLeft = new Move(pos, new Position(pos, -1, 1 * dir));
-        addUpgrade(captureLeft);
-        list.addCaptureOnly(captureLeft);
-        Move captureRight = new Move(pos, new Position(pos,  1, 1 * dir));
-        addUpgrade(captureRight);
-        list.addCaptureOnly(captureRight);
 
+        Move first;
+        for(PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
+            first = new Move(pos, dest);
+            addUpgrade(first, piece);
+            if (list.addMove(first) && !moved()) {
+                list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
+            }
+        }
+
+        Move captureLeft;
+        for(PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
+            captureLeft = new Move(pos, new Position(pos, -1, 1 * dir));
+            addUpgrade(captureLeft, piece);
+            if (list.addMove(captureLeft) && !moved()) {
+                list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
+            }
+            addUpgrade(captureLeft, piece);
+            list.addCaptureOnly(captureLeft);
+        }
+
+        Move captureRight;
+        for(PieceThatCanBeUpgradedTo piece : PieceThatCanBeUpgradedTo.values()) {
+            captureRight = new Move(pos, new Position(pos,  1, 1 * dir));
+            addUpgrade(captureRight, piece);
+            if (list.addMove(captureRight) && !moved()) {
+                list.addMove(new Move(pos, new Position(pos, 0, 2 * dir)));
+            }
+            addUpgrade(captureRight, piece);
+            list.addCaptureOnly(captureRight);
+        }
 
         return list;
     }
+
+
 
     /**
      * Add the upgrade actions to the given move if needed.
      *
      * @param move the move to be modified
      */
-    private void addUpgrade(final Move move) {
+    private void addUpgrade(final Move move, PieceThatCanBeUpgradedTo replacement) {
         if (move.getDest().getY() != upgradeRow()) {
             return;
         }
         move.setNext(new Move(move.getDest(), null)); // remove the pawn
         Move upgrade = new Move(null, move.getDest());
 
-        upgrade.setReplacement("Queen");
+        upgrade.setReplacement(replacement);
         upgrade.setReplacementSide(getSide());
         move.getNext().setNext(upgrade);              // add a queen
     }

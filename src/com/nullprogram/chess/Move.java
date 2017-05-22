@@ -29,7 +29,7 @@ public final class Move implements Serializable {
     private Piece captured;
 
     /** New piece to make. */
-    private String replacement;
+    private Piece.PieceThatCanBeUpgradedTo replacement;
 
     /** Side of the new piece to make. */
     private Piece.Side replacementSide;
@@ -123,7 +123,7 @@ public final class Move implements Serializable {
      *
      * @param pieceName piece to be created
      */
-    public void setReplacement(final String pieceName) {
+    public void setReplacement(final Piece.PieceThatCanBeUpgradedTo pieceName) {
         replacement = pieceName;
     }
 
@@ -132,7 +132,7 @@ public final class Move implements Serializable {
      *
      * @return piece to be created
      */
-    public String getReplacement() {
+    public Piece.PieceThatCanBeUpgradedTo getReplacement() {
         return replacement;
     }
 
