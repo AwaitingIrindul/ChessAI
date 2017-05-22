@@ -226,4 +226,8 @@ public class MoveList implements Iterable<Move>, Serializable {
     public final Iterator<Move> iterator() {
         return moves.iterator();
     }
+
+    public List<Move> getMoves() {
+        return moves;
+    }
 }

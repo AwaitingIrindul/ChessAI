@@ -201,8 +201,16 @@ public abstract class Board implements Serializable {
             move.setCaptured(getPiece(b));
             setPiece(b, getPiece(a));
             setPiece(a, null);
-            getPiece(b).setPosition(b);
-            getPiece(b).incMoved();
+            Piece piece = getPiece(b);
+            if(piece != null){
+                piece.setPosition(b);
+                piece.incMoved();
+            } else 
+                System.out.println("Bug");
+                
+                
+          //  getPiece(b).setPosition(b);
+               
         } else if (a != null && b == null) {
             move.setCaptured(getPiece(a));
             setPiece(a, null);
@@ -235,8 +243,12 @@ public abstract class Board implements Serializable {
         if (a != null && b != null) {
             setPiece(a, getPiece(b));
             setPiece(b, move.getCaptured());
-            getPiece(a).setPosition(a);
-            getPiece(a).decMoved();
+            Piece p = getPiece(a);
+            if(p != null){
+                getPiece(a).setPosition(a);
+                getPiece(a).decMoved();
+            }
+
         } else if (a != null && b == null) {
             setPiece(a, move.getCaptured());
         } else {

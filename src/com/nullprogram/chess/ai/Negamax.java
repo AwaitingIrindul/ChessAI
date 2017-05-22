@@ -1,7 +1,9 @@
 package com.nullprogram.chess.ai;
 
 import com.nullprogram.chess.*;
+import com.nullprogram.chess.pieces.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,17 +30,32 @@ public class Negamax implements Player {
     private int minDepth = 2;
     private int maxDepth;
 
+    private Map<Class, Double> values = new HashMap<>();
+
     private Board board;
+    private Piece.Side side;
     private BoardRepete boardCounter;
     long timeLimit = 50000;
 
     public Negamax(int maxDepth) {
         this.maxDepth = maxDepth;
         boardCounter = new BoardRepete();
+       // createValues();
+
+    }
+
+    private void createValues() {
+        values.put((new Pawn(side)).getClass(),1.0);
+        values.put((new Knight(side)).getClass(),3.0);
+        values.put((new Bishop(side)).getClass(),3.0);
+        values.put((new Rook(side)).getClass(),5.0);
+        values.put((new King(side)).getClass(),1000.0);
     }
 
     @Override
     public Move takeTurn(Board board, Piece.Side side) {
+        this.side = side;
+        createValues();
         nodeNb = 0;
         this.board = board;
 
@@ -47,7 +64,9 @@ public class Negamax implements Player {
         boardCounter.increment(board);
 
         MoveList moves = board.allMoves(side, true);
+        moves.shuffle();
         Move best = moves.peek();
+
 
 
         //Iterative deepening
@@ -55,27 +74,27 @@ public class Negamax implements Player {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + timeLimit;
         long currentTime;
-        for (int depth = 0; depth < maxDepth; depth++) {
+        for (int depth = 1; depth < maxDepth; ++depth) {
+
             currentTime = System.currentTimeMillis();
             if(currentTime >= endTime){
                 break;
             }
 
             //Can be stopped before reaching full depth if running out of time
-            Move uncheckMove = rootNegamax(moves, depth, Integer.MAX_VALUE, Integer.MIN_VALUE, endTime, side);
+            Move uncheckMove = rootNegamax(moves, depth, -infinity, infinity, endTime, side);
 
             if(uncheckMove != null){
                 best = uncheckMove;
                 moves.setFirst(best);
             }
 
-            board.move(best);
-            boardCounter.increment(board);
-            board.undo();
-            return best;
-        }
 
-        return null;
+        }
+        board.move(best);
+        boardCounter.increment(board);
+        board.undo();
+        return best;
 
     }
 
@@ -112,11 +131,11 @@ public class Negamax implements Player {
         int value;
         long currentTime;
 
-
-
-        for(Move move : moves ){
+        for(Move move : moves){
             currentTime = System.currentTimeMillis();
             if(currentTime >= endTime){
+                System.out.println("Time's up bitches");
+
                 cutoff = false;
                 return null;
             }
@@ -138,7 +157,8 @@ public class Negamax implements Player {
             }
 
             // Alpha-beta pruning
-            if(bestValue >= beta) {
+            if(alpha >= beta) {
+                System.out.println("Pruning");
                 break;
             }
 
@@ -153,7 +173,7 @@ public class Negamax implements Player {
 
     private int negamax(int depth, int alpha, int beta, Piece.Side side, long endTime) {
         nodeNb++;
-
+        
         //We extend search if one player is in check (to fasten checkmate)
         if(board.check()){
             depth++;
@@ -180,14 +200,16 @@ public class Negamax implements Player {
         }
 
         //We avoid repetitions
-        if(boardCounter.isRepetition(board)){
+      /*  if(boardCounter.isRepetition(board)){
+           // System.out.println("Repet");
+            
             return STALEMATE;
-        }
+        }*/
 
 
         //Base case
         if(depth == 0) {
-            return evaluate();
+            return evaluate(board);
             //TODO Quiescence search
         }
 
@@ -197,6 +219,8 @@ public class Negamax implements Player {
             if(board.check()){
                 return -MATE; //Negation because it's called with value = -negamax()
             } else {
+                System.out.println("?");
+                
                 return STALEMATE; //Stalemate
             }
         } else {
@@ -205,19 +229,30 @@ public class Negamax implements Player {
             int value;
             long currentTime;
             Move bestMove = moves.peek();
-            value = Integer.MIN_VALUE;
 
             for (Move move : moves){
                 if(move.getReplacement() != null)
                     System.out.println(move.getReplacement().toString());
                 currentTime = System.currentTimeMillis();
                 if(currentTime >= endTime){
+                    System.out.println("Time's up");
+
                     return Integer.MIN_VALUE;
                 }
 
+                System.out.println(move + " " + side);
+                
                 //See if there is a best value :
                 board.move(move);
+                System.out.println("Negamax descente");
                 value = -negamax(depth-1, -beta, -alpha, Piece.opposite(side), endTime);
+                System.out.println("Negamax remontée");
+                
+                if(value > bestValue) {
+                    bestValue = value;
+                    bestMove = move;
+                }
+
 
                 // If our max is greater than our lower bound, update our lower bound
                 if(bestValue > alpha) {
@@ -237,11 +272,33 @@ public class Negamax implements Player {
 
     }
 
-    private int evaluate() {
-        if(board.check())
-            return MATE;
-        else return 0;
+    private int evaluate(Board b) {
+        // TODO: 22/05/2017 Change
+        double material = materialValue(b);
+       /* double kingSafety = kingInsafetyValue(b);
+        double mobility = mobilityValue(b);
+        return material * wMaterial +
+                kingSafety * wSafety +
+                mobility * wMobility;*/
+       return (int)material;
     }
+
+    private double materialValue(final Board b) {
+        double value = 0;
+        for (int y = 0; y < b.getHeight(); y++) {
+            for (int x = 0; x < b.getWidth(); x++) {
+
+                Position pos = new Position(x, y);
+                Piece p = b.getPiece(pos);
+                if (p != null) {
+                    value += values.get(p.getClass()) * p.getSide().value();
+                }
+            }
+        }
+        return value * side.value();
+    }
+
+
 
     private void updateTranspositionTable(int alpha, int beta, int depth, int bestValue, Move best) {
         if(bestValue <= alpha) {

@@ -122,6 +122,8 @@ public class Game implements Runnable {
 
             /* Fetch the move from the player. */
             Move move = player.takeTurn(getBoard(), turn);
+            System.out.println(move);
+
             board.move(move);
             setProgress(0);
             if (done) {
