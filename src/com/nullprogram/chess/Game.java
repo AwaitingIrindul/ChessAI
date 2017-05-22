@@ -122,7 +122,7 @@ public class Game implements Runnable {
 
             /* Fetch the move from the player. */
             Move move = player.takeTurn(getBoard(), turn);
-            System.out.println(move);
+            System.out.println(turn + " : " + move);
 
             board.move(move);
             setProgress(0);
@@ -209,7 +209,7 @@ public class Game implements Runnable {
      * @param message  new status message
      */
     public final void setStatus(final String message) {
-        LOG.info("status: " + message);
+        //LOG.info("status: " + message);
         if (message == null) {
             throw new IllegalArgumentException();
         }

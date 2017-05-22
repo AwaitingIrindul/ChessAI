@@ -36,6 +36,7 @@ public class Negamax implements Player {
     private Piece.Side side;
     private BoardRepete boardCounter;
     long timeLimit = 50000;
+    int infinity = 1000000;
 
     public Negamax(int maxDepth) {
         this.maxDepth = maxDepth;
@@ -108,7 +109,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-        /*if(infos != null && infos.getDepth() >= depth){
+        if(infos != null && infos.getDepth() >= depth){
 
             if(infos.getType() == BoardInfo.EXACT){
                 //Better move
@@ -124,7 +125,7 @@ public class Negamax implements Player {
             if(alpha >= beta){ //Alpha-beta pruning
                 return  infos.getBestMove();
             }
-        }*/
+        }
 
 
 
@@ -182,7 +183,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-       /* if(infos != null && infos.getDepth() >= depth) {
+        if(infos != null && infos.getDepth() >= depth) {
 
             if (infos.getType() == BoardInfo.EXACT) {
                 //Better move
@@ -198,14 +199,14 @@ public class Negamax implements Player {
             if (alpha >= beta) { //Alpha-beta pruning
                 return infos.getValue();
             }
-        }*/
+        }
 
         //We avoid repetitions
-      /*  if(boardCounter.isRepetition(board)){
+       if(boardCounter.isRepetition(board)){
            // System.out.println("Repet");
             
             return STALEMATE;
-        }*/
+        }
 
 
         //Base case
