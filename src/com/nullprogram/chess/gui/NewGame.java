@@ -104,7 +104,7 @@ public class NewGame extends JDialog implements ActionListener {
         if ("human".equals(name)) {
             return parent.getPlayer();
         } else {
-            return new Negamax(5);
+            return new Negamax(8);
         }
     }
 

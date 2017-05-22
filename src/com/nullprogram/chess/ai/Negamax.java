@@ -30,7 +30,7 @@ public class Negamax implements Player {
 
     private Board board;
     private BoardRepete boardCounter;
-    long timeLimit = 200000;
+    long timeLimit = 50000;
 
     public Negamax(int maxDepth) {
         this.maxDepth = maxDepth;
