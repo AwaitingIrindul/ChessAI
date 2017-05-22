@@ -20,6 +20,10 @@ namespace chesspp
         class King;
         class Pawn;
     }
+    namespace player
+    {
+        class Player;
+    }
     namespace board
     {
         /**
@@ -31,12 +35,14 @@ namespace chesspp
         class Board
         {
              friend class ::chesspp::piece::King;
+
         public:
             using BoardSize_t = config::BoardConfig::BoardSize_t;
             using Position_t = config::BoardConfig::Position_t;
             using Suit = config::BoardConfig::SuitClass_t;
             using Pieces_t = std::set<std::unique_ptr<piece::Piece>>;
         private:
+            friend class Player;
             struct Pieces_t_const_iterator_compare
             {
                 bool operator()(Pieces_t::const_iterator const &a, Pieces_t::const_iterator const &b) const
@@ -126,6 +132,8 @@ namespace chesspp
                 return pieces.cend();
             }
 
+            const Movements_t &getTrajectories() const;
+
             /**
              * \brief
              * Holds the valid movements for all pieces on the board.
@@ -202,6 +210,9 @@ namespace chesspp
         private:
             void update(Position_t const &pos, Suit turn);
         public:
+
+
+
             /**
              * \brief
              * Capture a capturable piece.
@@ -240,8 +251,6 @@ namespace chesspp
              */
             void promote(std::set<std::unique_ptr<chesspp::piece::Piece>>::const_iterator pawn, piece::Piece &newPiece);
         };
-
-        friend class Player;
 
 
     }

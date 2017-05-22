@@ -9,22 +9,26 @@
 
 namespace chesspp {
     namespace player {
-        double Player::negamax(MoveWrapper& wrapper, const int depth, double alpha, double beta) {
+
+        double Player::negamax(std::pair<board::Board::Pieces_t::const_iterator, board::Board::Position_t> & move, const int depth, double alpha, double beta) {
             if(depth == 0) { // TODO 19/05/2017 : Or game is finished
                 return evaluate();
             }
 
-            std::vector<Move> moves = getAvailableMoves();
-            MoveWrapper& nullRef = MoveWrapper::toReference(nullptr);
+            auto moves = getAvailableMoves();
+            Move::iterator best = moves.begin();
+
             double score = 0;
 
-            for(auto move : moves){
+            auto it = moves.begin();
+
+            for(it; it != moves.end(); ++it){
                 executeMove();
-                score = -negamax(nullRef, depth - 1, -beta, -alpha);
+                score = -negamax(move, depth - 1, -beta, -alpha);
                 undoMove();
                 if(score > alpha){
                     alpha = score;
-                    best = move;
+                    best = it;
                     if(alpha >= beta){
                         break;
                     }
@@ -32,25 +36,16 @@ namespace chesspp {
             }
 
 
-            if(&nullRef == &wrapper){
-                std::cout<<"Setting best move"<<std::endl;
-                wrapper.setMove(best);
-            }
+            std::cout<<"Setting best move"<<std::endl;
+            move = (*best);
 
-            return alpha;*/
-            return 0;
-
-
-
+            return alpha;
         }
 
         double Player::evaluate() {
             return 0;
         }
 
-        std::vector<Move> Player::getAvailableMoves() {
-            return std::vector<Move, std::allocator<Move>>();
-        }
 
         void Player::executeMove() {
 
@@ -61,7 +56,11 @@ namespace chesspp {
         }
 
         Player::Player(board::Board &board) : board(board) {
+            auto move = board.getTrajectories();
+        }
 
+        const board::Board::Movements_t & Player::getAvailableMoves() {
+            return board.getTrajectories();
         }
     }
 }

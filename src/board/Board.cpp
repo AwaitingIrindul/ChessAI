@@ -201,5 +201,10 @@ namespace chesspp
             update(t, turn);
             return true;
         }
+
+        const Board::Movements_t &Board::getTrajectories() const {
+            return trajectories;
+        }
+
     }
 }

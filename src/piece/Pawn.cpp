@@ -28,17 +28,7 @@ namespace chesspp
 
         void Pawn::tick(Position_t const &m)
         {
-            if(m == pos){
-                if(this->suit == "White"){
-                    if(pos.x == 0){
-                        // TODO 30/04/2017 : Promote here
-                    }
-                } else {
-                    if(pos.x == 7){
-                        // TODO 30/04/2017 : Promote here
-                    }
-                }
-            }
+
         }
 
         void Pawn::calcTrajectory()

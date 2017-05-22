@@ -6,7 +6,7 @@
 #define CHESSPLUSPLUS_PLAYER_H
 
 
-#include "MoveWrapper.h"
+#include <board/Board.hpp>
 
 namespace chesspp
 {
@@ -15,21 +15,22 @@ namespace chesspp
     }
     namespace player
     {
-        friend class chesspp::board::Board;
+
 
 
         class Player {
         private:
             chesspp::board::Board &board;
-            
+            using Move = chesspp::board::Board::Movements_t;
         public:
-            double negamax( MoveWrapper& wrapper, const int depth, double alpha, double beta);
+            double negamax(std::pair<board::Board::Pieces_t::const_iterator, board::Board::Position_t> & move, const int depth, double alpha, double beta);
             double evaluate();
-            std::vector<Move> getAvailableMoves();
             void executeMove();
             void undoMove();
 
             Player(board::Board &board);
+
+            const board::Board::Movements_t & getAvailableMoves();
         };
     }
 }

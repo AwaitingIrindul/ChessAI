@@ -74,8 +74,6 @@ namespace chesspp
             { //Exit to menu screen
                 return app.changeState<StartMenuState>(std::ref(app), std::ref(display));
             }
-
-            //TODO : Ajouter une touche ici pour la gestion des coups spéciaux, genre roque ect..
         }
         void ChessPlusPlusState::onMouseMoved(int x, int y)
         {
