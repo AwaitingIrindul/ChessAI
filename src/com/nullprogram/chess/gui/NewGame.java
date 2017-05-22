@@ -4,6 +4,7 @@ import com.nullprogram.chess.Board;
 import com.nullprogram.chess.Game;
 import com.nullprogram.chess.Player;
 import com.nullprogram.chess.ai.Minimax;
+import com.nullprogram.chess.ai.Negamax;
 import com.nullprogram.chess.boards.Gothic;
 import com.nullprogram.chess.boards.StandardBoard;
 import java.awt.BorderLayout;
@@ -103,7 +104,7 @@ public class NewGame extends JDialog implements ActionListener {
         if ("human".equals(name)) {
             return parent.getPlayer();
         } else {
-            return new Minimax(game, name);
+            return new Negamax(5);
         }
     }
 

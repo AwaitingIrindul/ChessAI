@@ -216,6 +216,11 @@ public class MoveList implements Iterable<Move>, Serializable {
         Collections.shuffle(moves);
     }
 
+    public final void setFirst(Move move){
+        moves.remove(move);
+        moves.add(move);
+    }
+
     @Override
     public final Iterator<Move> iterator() {
         return moves.iterator();

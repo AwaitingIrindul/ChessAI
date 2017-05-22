@@ -351,4 +351,11 @@ public abstract class Board implements Serializable {
     public final int moveCount() {
         return moves.size();
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    public abstract long id();
 }

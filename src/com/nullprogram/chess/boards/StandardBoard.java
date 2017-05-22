@@ -151,4 +151,9 @@ public class StandardBoard extends Board {
         }
         return false;
     }
+
+    @Override
+    public long id() {
+        return 0;
+    }
 }

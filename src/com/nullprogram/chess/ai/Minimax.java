@@ -114,14 +114,8 @@ public class Minimax implements Player {
                    Double.parseDouble(config.getProperty("Bishop")));
         values.put((new Rook(side)).getClass(),
                    Double.parseDouble(config.getProperty("Rook")));
-        values.put((new Queen(side)).getClass(),
-                   Double.parseDouble(config.getProperty("Queen")));
         values.put((new King(side)).getClass(),
                    Double.parseDouble(config.getProperty("King")));
-        values.put((new Chancellor(side)).getClass(),
-                   Double.parseDouble(config.getProperty("Chancellor")));
-        values.put((new Archbishop(side)).getClass(),
-                   Double.parseDouble(config.getProperty("Archbishop")));
 
         maxDepth = (int) Double.parseDouble(config.getProperty("depth"));
         wMaterial = Double.parseDouble(config.getProperty("material"));
