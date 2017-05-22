@@ -7,23 +7,32 @@ import com.nullprogram.chess.Piece;
  */
 public final class PieceFactory {
 
-    /** Hidden constructor. */
+    /**
+     * Hidden constructor.
+     */
     private PieceFactory() {
     }
 
     /**
-     * Create a new piece by name.
+     * Create a new piece by name. Only for upgrade.
      *
      * @param name name of the piece
      * @param side side for the new piece
      * @return the new piece
      */
-    public static Piece create(final String name, final Piece.Side side) {
-        if ("Queen".equals(name)) {
-            return new Queen(side);
-        } else {
-            /* Maybe throw an exception here? */
-            return null;
+    public static Piece create(final Piece.PieceThatCanBeUpgradedTo name, final Piece.Side side) {
+        Piece piece = null;
+        switch (name) {
+            case ROOK:
+                piece = new Rook(side);
+                break;
+            case KNIGHT:
+                piece = new Knight(side);
+                break;
+            case BISHOP:
+                piece = new Bishop(side);
+                break;
         }
+        return piece;
     }
 }
