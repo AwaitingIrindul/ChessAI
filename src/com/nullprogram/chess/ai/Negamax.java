@@ -34,7 +34,7 @@ public class Negamax implements Player {
     private Board board;
     private Piece.Side side;
     private BoardRepete boardCounter;
-    long timeLimit = 100000;
+    long timeLimit = 10000000;
     int infinity = 10000000;
 
     public Negamax(int maxDepth) {
@@ -82,7 +82,7 @@ public class Negamax implements Player {
             }
 
             //Can be stopped before reaching full depth if running out of time
-            Move uncheckMove = rootNegamax(moves, depth, -infinity, infinity, endTime, Piece.opposite(side));
+            Move uncheckMove = rootNegamax(moves, depth, -infinity, infinity, endTime, side);
 
             if(uncheckMove != null){
                 best = uncheckMove;
@@ -109,7 +109,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-       /* if(infos != null && infos.getDepth() >= depth){
+        if(infos != null && infos.getDepth() >= depth){
 
             if(infos.getType() == BoardInfo.EXACT){
                 //Better move
@@ -126,8 +126,7 @@ public class Negamax implements Player {
                 return  infos.getBestMove();
             }
 
-            System.out.println("tt");
-        } */
+        }
 
 
 
@@ -187,7 +186,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-       /*if(infos != null && infos.getDepth() >= depth) {
+       if(infos != null && infos.getDepth() >= depth) {
 
             if (infos.getType() == BoardInfo.EXACT) {
                 //Better move
@@ -204,19 +203,21 @@ public class Negamax implements Player {
             if (alpha >= beta) { //Alpha-beta pruning
                 return infos.getValue();
             }
-        }*/
+        }
 
         //We avoid repetitions
-      /* if(boardCounter.isRepetition(board)){
-           // System.out.println("Repet");
+       if(boardCounter.isRepetition(board)){
+            System.out.println("Repet");
             
             return STALEMATE;
-        }*/
+        }
 
 
         //Base case
         if(depth == 0) {
-            return evaluate(board);
+            double v = evaluate(board);
+            return (side != this.side) ? -v: v;
+
             //TODO Quiescence search
         }
 
