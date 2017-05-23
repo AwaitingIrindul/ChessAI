@@ -10,14 +10,14 @@ public class BoardInfo {
     public static final int EXACT = 1;
     public static final int UPPER = 2;
 
-    private int value;
+    private double value;
     private Move bestMove;
     private Move secondBestMove;
     private int type;
     private int depth;
     private int secondMoveDepth;
 
-    public BoardInfo(int value, Move move, int type, int depth) {
+    public BoardInfo(double value, Move move, int type, int depth) {
         this.value = value;
         this.bestMove = move;
         this.type = type;
@@ -26,7 +26,7 @@ public class BoardInfo {
         this.secondBestMove = null;
     }
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
@@ -49,7 +49,7 @@ public class BoardInfo {
     // Replace when we have a better value (bigger depth)
     // Only replace the second best move if it's different from
     // the best move.
-    public void updateInfo(int value, Move move, int type, int depth) {
+    public void updateInfo(double value, Move move, int type, int depth) {
 
         // Replacing a better value!
         if(depth > this.depth) {

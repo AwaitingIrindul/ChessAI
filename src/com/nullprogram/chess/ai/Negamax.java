@@ -34,7 +34,7 @@ public class Negamax implements Player {
     private Board board;
     private Piece.Side side;
     private BoardRepete boardCounter;
-    long timeLimit = 10000;
+    long timeLimit = 100000;
     int infinity = 10000000;
 
     public Negamax(int maxDepth) {
@@ -89,6 +89,7 @@ public class Negamax implements Player {
                 moves.setFirst(best);
             }
 
+            System.out.println("depth changing");
 
         }
         board.move(best);
@@ -98,7 +99,7 @@ public class Negamax implements Player {
 
     }
 
-    private Move rootNegamax(MoveList moves, int depth, int alpha, int beta, long endTime, Piece.Side side) {
+    private Move rootNegamax(MoveList moves, int depth, double alpha, double beta, long endTime, Piece.Side side) {
         nodeNb++;
 
         //We extend search if one player is in check (to fasten checkmate)
@@ -108,7 +109,7 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-        if(infos != null && infos.getDepth() >= depth){
+       /* if(infos != null && infos.getDepth() >= depth){
 
             if(infos.getType() == BoardInfo.EXACT){
                 //Better move
@@ -124,13 +125,15 @@ public class Negamax implements Player {
             if(alpha >= beta){ //Alpha-beta pruning
                 return  infos.getBestMove();
             }
-        }
+
+            System.out.println("tt");
+        } */
 
 
 
-        int bestValue = Integer.MIN_VALUE;
+        double bestValue = Integer.MIN_VALUE;
         Move best = moves.first();
-        int value;
+        double value;
         long currentTime;
 
         for(Move move : moves){
@@ -144,7 +147,8 @@ public class Negamax implements Player {
 
 
             board.move(move);
-            value = -negamax(depth -1, -beta, -alpha, side, endTime);
+            value = -negamax(depth -1, -beta, -alpha, Piece.opposite(side), endTime);
+            System.out.println("Value : " + value + " " + move + " " + side);
             board.undo();
 
             //If we have a better value :
@@ -172,10 +176,10 @@ public class Negamax implements Player {
 
 
 
-    private int negamax(int depth, int alpha, int beta, Piece.Side side, long endTime) {
+    private double negamax(int depth, double alpha, double beta, Piece.Side side, long endTime) {
         nodeNb++;
 
-
+       // System.out.println("depth :" + depth);
         //We extend search if one player is in check (to fasten checkmate)
         if(board.check()){
             depth++;
@@ -183,10 +187,11 @@ public class Negamax implements Player {
 
         BoardInfo infos = transpositionTable.get(board.id());
 
-        if(infos != null && infos.getDepth() >= depth) {
+       /*if(infos != null && infos.getDepth() >= depth) {
 
             if (infos.getType() == BoardInfo.EXACT) {
                 //Better move
+                System.out.println("Returning ");
                 return infos.getValue();
             }
             //Better bounds
@@ -199,19 +204,19 @@ public class Negamax implements Player {
             if (alpha >= beta) { //Alpha-beta pruning
                 return infos.getValue();
             }
-        }
+        }*/
 
         //We avoid repetitions
-       if(boardCounter.isRepetition(board)){
+      /* if(boardCounter.isRepetition(board)){
            // System.out.println("Repet");
             
             return STALEMATE;
-        }
+        }*/
 
 
         //Base case
         if(depth == 0) {
-            return (int)evaluate(board);
+            return evaluate(board);
             //TODO Quiescence search
         }
 
@@ -229,8 +234,8 @@ public class Negamax implements Player {
             orderMoves(moves, infos);
 
 
-            int bestValue = Integer.MIN_VALUE;
-            int value;
+            double bestValue = Integer.MIN_VALUE;
+            double value;
             long currentTime;
             Move bestMove = moves.first();
 
@@ -378,7 +383,7 @@ public class Negamax implements Player {
 
 
 
-    private void updateTranspositionTable(int alpha, int beta, int depth, int bestValue, Move best) {
+    private void updateTranspositionTable(double alpha, double beta, int depth, double bestValue, Move best) {
         if(bestValue <= alpha) {
             updateTranspositionTable(bestValue, best, BoardInfo.LOWER, depth);
         }
@@ -390,7 +395,7 @@ public class Negamax implements Player {
         }
     }
 
-    private void updateTranspositionTable(int bestValue, Move best, int type, int depth) {
+    private void updateTranspositionTable(double bestValue, Move best, int type, int depth) {
         BoardInfo boardInfo = transpositionTable.get(board.id());
         if(boardInfo != null) {
             boardInfo.updateInfo(bestValue, best, type, depth);
