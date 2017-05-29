@@ -17,25 +17,39 @@ import java.awt.event.ActionListener;
  */
 public class NewGame extends JDialog implements ActionListener {
 
-    /** Version for object serialization. */
+    /**
+     * Version for object serialization.
+     */
     private static final long serialVersionUID = 1L;
 
-    /** Parent to this dialog. */
+    /**
+     * Parent to this dialog.
+     */
     private final ChessFrame parent;
 
-    /** White player selector. */
+    /**
+     * White player selector.
+     */
     private final PlayerSelector whitePanel;
 
-    /** Black player selector. */
+    /**
+     * Black player selector.
+     */
     private final PlayerSelector blackPanel;
 
-    /** Vertical padding around this panel. */
+    /**
+     * Vertical padding around this panel.
+     */
     static final int V_PADDING = 15;
 
-    /** Horizontal padding around this panel. */
+    /**
+     * Horizontal padding around this panel.
+     */
     static final int H_PADDING = 10;
 
-    /** True if the dialog was cancelled away. */
+    /**
+     * True if the dialog was cancelled away.
+     */
     private boolean cancelled = true;
 
     /**
@@ -63,9 +77,9 @@ public class NewGame extends JDialog implements ActionListener {
         JPanel buttonRow = new JPanel();
         buttonRow.setLayout(new BoxLayout(buttonRow, BoxLayout.X_AXIS));
         buttonRow.setBorder(BorderFactory.createEmptyBorder(H_PADDING,
-                            V_PADDING,
-                            H_PADDING,
-                            V_PADDING));
+                V_PADDING,
+                H_PADDING,
+                V_PADDING));
         buttonRow.add(Box.createHorizontalGlue());
         buttonRow.add(ok);
         buttonRow.add(cancel);
@@ -94,7 +108,34 @@ public class NewGame extends JDialog implements ActionListener {
         if ("human".equals(name)) {
             return parent.getPlayer();
         } else {
-            return new Negamax(5);
+            int depth;
+            switch (name) {
+                case "depth2":
+                    depth = 2;
+                    break;
+                case "depth3":
+                    depth = 3;
+                    break;
+                case "depth4":
+                    depth = 4;
+                    break;
+                case "depth5":
+                    depth = 5;
+                    break;
+                case "depth6":
+                    depth = 6;
+                    break;
+                case "depth7":
+                    depth = 7;
+                    break;
+                case "depth8":
+                    depth = 8;
+                    break;
+                default:
+                    depth = 5;
+                    break;
+            }
+            return new Negamax(depth);
         }
     }
 
