@@ -1,6 +1,6 @@
 package com.nullprogram.chess;
 
-import com.nullprogram.chess.ai.Minimax;
+import com.nullprogram.chess.ai.Negamax;
 import com.nullprogram.chess.boards.StandardBoard;
 import com.nullprogram.chess.gui.BoardPanel;
 import java.util.logging.Logger;
@@ -40,7 +40,7 @@ public final class ChessApplet extends JApplet implements GameListener {
         BoardPanel panel = new BoardPanel(board);
         add(panel);
         Game game = new Game(board);
-        game.seat(panel, new Minimax(game));
+        game.seat(panel, new Negamax(8));
         game.addGameListener(this);
         game.addGameListener(panel);
         game.begin();

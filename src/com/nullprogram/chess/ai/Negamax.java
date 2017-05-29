@@ -34,7 +34,7 @@ public class Negamax implements Player {
     private Board board;
     private Piece.Side side;
     private BoardRepete boardCounter;
-    long timeLimit = 10000000;
+    long timeLimit = 10000;
     int infinity = 10000000;
 
     public Negamax(int maxDepth) {
@@ -89,8 +89,6 @@ public class Negamax implements Player {
                 moves.setFirst(best);
             }
 
-            System.out.println("depth changing");
-
         }
         board.move(best);
         boardCounter.increment(board);
@@ -138,7 +136,6 @@ public class Negamax implements Player {
         for(Move move : moves){
             currentTime = System.currentTimeMillis();
             if(currentTime >= endTime){
-                System.out.println("Time's up");
 
                 cutoff = false;
                 return null;
@@ -147,7 +144,6 @@ public class Negamax implements Player {
 
             board.move(move);
             value = -negamax(depth -1, -beta, -alpha, Piece.opposite(side), endTime);
-            System.out.println("Value : " + value + " " + move + " " + side);
             board.undo();
 
             //If we have a better value :
@@ -178,7 +174,6 @@ public class Negamax implements Player {
     private double negamax(int depth, double alpha, double beta, Piece.Side side, long endTime) {
         nodeNb++;
 
-       // System.out.println("depth :" + depth);
         //We extend search if one player is in check (to fasten checkmate)
         if(board.check()){
             depth++;
@@ -190,7 +185,6 @@ public class Negamax implements Player {
 
             if (infos.getType() == BoardInfo.EXACT) {
                 //Better move
-                System.out.println("Returning ");
                 return infos.getValue();
             }
             //Better bounds
@@ -207,8 +201,6 @@ public class Negamax implements Player {
 
         //We avoid repetitions
        if(boardCounter.isRepetition(board)){
-            System.out.println("Repet");
-            
             return STALEMATE;
         }
 
@@ -217,8 +209,6 @@ public class Negamax implements Player {
         if(depth == 0) {
             double v = evaluate(board);
             return (side != this.side) ? -v: v;
-
-            //TODO Quiescence search
         }
 
         MoveList moves = generateOrderedMoves(side);
@@ -241,12 +231,9 @@ public class Negamax implements Player {
             Move bestMove = moves.first();
 
             for (Move move : moves){
-                if(move.getReplacement() != null)
-                    System.out.println(move.getReplacement().toString());
+
                 currentTime = System.currentTimeMillis();
                 if(currentTime >= endTime){
-                    System.out.println("Time's up");
-
                     return Integer.MIN_VALUE;
                 }
 
