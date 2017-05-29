@@ -29,9 +29,6 @@ public class NewGame extends JDialog implements ActionListener {
     /** Black player selector. */
     private final PlayerSelector blackPanel;
 
-    /** Black player selector. */
-    private final BoardSelector boardPanel;
-
     /** Vertical padding around this panel. */
     static final int V_PADDING = 15;
 
@@ -57,8 +54,6 @@ public class NewGame extends JDialog implements ActionListener {
         blackPanel = new PlayerSelector("Black:", false);
         add(whitePanel, BorderLayout.LINE_START);
         add(blackPanel, BorderLayout.CENTER);
-        boardPanel = new BoardSelector();
-        add(boardPanel, BorderLayout.LINE_END);
 
         JButton ok = new JButton("OK");
         JButton cancel = new JButton("Cancel");
@@ -128,7 +123,7 @@ public class NewGame extends JDialog implements ActionListener {
         if (cancelled) {
             return null;
         }
-        Game game = new Game(createBoard(boardPanel.getBoard()));
+        Game game = new Game(createBoard("chess"));
         Player white = createPlayer(game, whitePanel.getPlayer());
         Player black = createPlayer(game, blackPanel.getPlayer());
         game.seat(white, black);
